@@ -27,7 +27,7 @@ To Install:
 from __future__ import print_function
 
 __title__ = "Copy Write File Path to Clipboard"
-__version_info__ = (0, 2, 1)
+__version_info__ = (0, 2, 2)
 __version__ = ".".join([str(num) for num in __version_info__])
 
 MESSAGE_PREFIX = "[PYTHONHOOK]"
@@ -36,6 +36,25 @@ def message(string):
     """Print message to screen using MESSAGE_PREFIX global."""
 
     print(" ".join([MESSAGE_PREFIX, string]))
+
+
+def filter_selection(selection):
+    """Selection can include items other than Write Nodes.  
+    
+    Even though scope_write_node seems like it would filter for only write nodes, it
+    will pass a selection if the selection includes at least 1 write node.  The other
+    selections can be anything.  Need this to filter the selection to only Write File
+    nodes."""
+
+    import flame
+
+    filtered = []
+
+    for item in selection:
+        if item.type.get_value() == 'Write File':
+            filtered.append(item)
+
+    return filtered
 
 def send_to_clipboard(str_data):
     """Takes data in the form of a string and send it the system clipboard."""
@@ -128,8 +147,10 @@ def write_file_copy_path_old_school(selection):
     message("Script called from {}".format(__file__))
 
     path_list = []
+    
+    nodes = filter_selection(selection)
 
-    for node in selection:
+    for node in nodes:
 
         path = node.media_path.get_value()
         pattern = complete_pattern(node.media_path_pattern.get_value())
@@ -166,7 +187,9 @@ def write_file_copy_path(selection):
 
     path_list = []
 
-    for node in selection:
+    nodes = filter_selection(selection)
+
+    for node in nodes:
 
         full_path = node.get_resolved_media_path(show_extension = True)
         path_list.append(full_path)
