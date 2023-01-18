@@ -27,7 +27,7 @@ To Install:
 from __future__ import print_function
 
 __title__ = "Copy Write File Path to Clipboard"
-__version_info__ = (0, 2, 0)
+__version_info__ = (0, 2, 1)
 __version__ = ".".join([str(num) for num in __version_info__])
 
 MESSAGE_PREFIX = "[PYTHONHOOK]"
@@ -168,7 +168,7 @@ def write_file_copy_path(selection):
 
     for node in selection:
 
-        full_path = node.get_resolved_media_path(show_extension = False)
+        full_path = node.get_resolved_media_path(show_extension = True)
         path_list.append(full_path)
 
     # Shell output
